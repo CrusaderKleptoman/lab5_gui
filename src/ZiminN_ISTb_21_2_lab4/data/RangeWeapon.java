@@ -1,8 +1,8 @@
-package ZiminN_ISTb_21_2_lab4;
+package ZiminN_ISTb_21_2_lab4.data;
 
 import java.util.Scanner;
 
-public class RangeWeapon extends BaseWeapon{
+public class RangeWeapon extends BaseWeapon {
     private int ammunition;
     public RangeWeapon()
     {

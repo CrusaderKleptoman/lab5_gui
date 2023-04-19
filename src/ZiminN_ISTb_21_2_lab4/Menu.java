@@ -1,5 +1,7 @@
 package ZiminN_ISTb_21_2_lab4;
 
+import ZiminN_ISTb_21_2_lab4.data.*;
+
 import java.io.*;
 import java.util.Scanner;
 

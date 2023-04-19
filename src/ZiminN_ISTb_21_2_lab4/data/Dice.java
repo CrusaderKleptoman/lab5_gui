@@ -1,4 +1,4 @@
-package ZiminN_ISTb_21_2_lab4;
+package ZiminN_ISTb_21_2_lab4.data;
 
 public enum Dice {
     D2,

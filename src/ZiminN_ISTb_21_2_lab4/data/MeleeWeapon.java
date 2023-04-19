@@ -1,6 +1,6 @@
-package ZiminN_ISTb_21_2_lab4;
+package ZiminN_ISTb_21_2_lab4.data;
 
-public class MeleeWeapon extends BaseWeapon{
+public class MeleeWeapon extends BaseWeapon {
     public MeleeWeapon()
     {
         super();

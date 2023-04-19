@@ -1,4 +1,4 @@
-package ZiminN_ISTb_21_2_lab4;
+package ZiminN_ISTb_21_2_lab4.data;
 
 import java.util.ArrayList;
 
@@ -87,6 +87,25 @@ public class WeaponList {
                 System.out.printf("%d) Оружие дальнего боя, название оружия %s, урон оружия %d%s, модификатор попадания и урона %d, дистанция выстрела %d, запас аммуниции %d \n", count, weapon.getWeaponName(), weapon.getDamageDiceAmount(), weapon.getDamageDice().toString(), weapon.getWeaponSharpening(), weapon.getAttackRange(), ((RangeWeapon) weapon).getAmmunition());
             }
         }
+    }
+    public String getWeaponType(int weaponID)
+    {
+        try {
+            BaseWeapon weapon = weaponList.get(weaponID);
+            if(weapon.getClass() == MeleeWeapon.class)
+            {
+                return "Ближнего боя";
+            }
+            if (weapon.getClass() == RangeWeapon.class)
+            {
+                return "Дальнего боя";
+            }
+        }
+        catch (IndexOutOfBoundsException exception)
+        {
+            System.out.println("Оружия под данным номером нет");
+        }
+        return "-";
     }
     public void clearWeaponList()
     {
