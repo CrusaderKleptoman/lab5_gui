@@ -1,19 +1,21 @@
 package ZiminN_ISTb_21_2_lab4.data;
 
+import javax.swing.*;
+import java.util.HashMap;
+
 public class MeleeWeapon extends BaseWeapon {
     public MeleeWeapon()
     {
         super();
         this.setWeaponName("Ножка от стула");
-        this.setDamageDice(Dice.D4);
-        this.setDamageDiceAmount(1);
+        this.setDamageDice("1D4");
         this.setWeaponSharpening(0);
         this.setAttackRange(5);
     }
 
-    public MeleeWeapon(String weaponName, Dice damageDice, int damageDiceAmount, int accuracy, int attackRange)
+    public MeleeWeapon(String weaponName, String damageDice,  int accuracy, int attackRange)
     {
-        super(weaponName, damageDice, damageDiceAmount, accuracy, attackRange);
+        super(weaponName, damageDice, accuracy, attackRange);
     }
 
     public MeleeWeapon(MeleeWeapon meleeWeapon)
@@ -22,31 +24,29 @@ public class MeleeWeapon extends BaseWeapon {
     }
 
     @Override
-    public int Attack(int enemyArmour, int distance) {
+    public int Attack(int enemyArmour, int distance, JTextArea outputText) {
 
         if (distance > this.getAttackRange())
         {
-            System.out.println("Враг слишком далеко для удара, невозможно совершение атаки");
+            outputText.append("Враг слишком далеко для удара, невозможно совершение атаки\n");
             return 0;
         }
 
         int rollDiceDamage = this.getWeaponSharpening();;
-        int rollDiceHit = RollDice(Dice.D20) + this.getWeaponSharpening();
-        System.out.printf("Бросок на попадание %d\n", rollDiceHit);
+        int rollDiceHit = RollDice("1D20") + this.getWeaponSharpening();
+        outputText.append("Бросок на попадание " + rollDiceHit + "\n");
         if (rollDiceHit < enemyArmour)
         {
-            System.out.println("Броня не пробита");
+            outputText.append("Броня не пробита\n");
             return 0;
         }
         else
         {
-            System.out.println("Броня пробита");
-            for (int i = 0; i < this.getDamageDiceAmount(); i++) {
-                rollDiceDamage += RollDice(this.getDamageDice());
-            }
+            outputText.append("Броня пробита\n");
+
         }
 
-        System.out.printf("Нанесено урона %d\n", rollDiceDamage);
+        outputText.append("Нанесено урона " + rollDiceDamage + "\n");
         return rollDiceDamage;
     }
 }

@@ -50,7 +50,7 @@ public class Menu {
 
     private static void WeaponListMenu()
     {
-        String armory = "armory.bin";
+        /*String armory = "armory.bin";
         int weaponAmount;
         String weaponType;
         Dice[] diceList = Dice.values();
@@ -206,7 +206,7 @@ public class Menu {
                     System.out.println("Команды нет в списке, повторите ввод");
             }
 
-        } while (command != 0);
+        } while (command != 0);*/
     }
 
     private static void WeaponMenu()
@@ -239,7 +239,7 @@ public class Menu {
                         System.out.println("Введите уровень защиты на манекене и дистанцию до него");
                         System.out.println("Уровень защиты = "); int armoryLevel = readCommand();
                         System.out.println("Дистанция в футах = "); int distance = readCommand();
-                        weapon.Attack(armoryLevel, distance);
+                        //weapon.Attack(armoryLevel, distance);
                     }
                     catch (NullPointerException nullPointerException)
                     {

@@ -51,12 +51,11 @@ public class SimpleModel extends AbstractTableModel
     @Override
     public Object getValueAt(int row, int column)
     {
-        boolean flag = ( row % 2 == 1 ) ? true : false;
         // Данные для стобцов
         switch (column) {
             case 0: return data.getWeaponType(row);
             case 1: return data.getWeapon(row).getWeaponName();
-            case 2: {String damage = data.getWeapon(row).getDamageDiceAmount() + data.getWeapon(row).getDamageDice().toString(); return damage;}
+            case 2: return data.getWeapon(row).getDamageDice();
             case 3: return data.getWeapon(row).getWeaponSharpening();
             case 4: return data.getWeapon(row).getAttackRange();
             case 5: {
