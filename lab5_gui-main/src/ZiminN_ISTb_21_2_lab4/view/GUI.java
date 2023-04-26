@@ -132,12 +132,20 @@ public class GUI{
             try {
                 MeleeWeapon newWeapon = new MeleeWeapon();
                 weaponList.addWeapon(newWeapon);
-                
+                myTableModel.fireTableDataChanged();
             }
             catch (Exception io)
             {}
         });
-
+        buttonDeleteWeapon.addActionListener(e -> {
+            try {
+                MeleeWeapon newWeapon = new MeleeWeapon();
+                weaponList.removeWeaponWithID(jTableWeaponList.getSelectedRow());
+                myTableModel.fireTableDataChanged();
+            }
+            catch (Exception io)
+            {}
+        });
         myButtonPanel.add(buttonAttack);
         myButtonPanel.add(buttonAddWeapon);
         myButtonPanel.add(buttonDeleteWeapon);
