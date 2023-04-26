@@ -1,15 +1,12 @@
 package ZiminN_ISTb_21_2_lab4.view;
 
-import ZiminN_ISTb_21_2_lab4.data.Dice;
-import ZiminN_ISTb_21_2_lab4.data.MeleeWeapon;
-import ZiminN_ISTb_21_2_lab4.data.RangeWeapon;
-import ZiminN_ISTb_21_2_lab4.data.WeaponList;
-import ZiminN_ISTb_21_2_lab4.data.SimpleModel;
+import ZiminN_ISTb_21_2_lab4.data.*;
 
 
 import javax.swing.*;
-import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,6 +16,8 @@ public class GUI{
 
     private static JFrame jFrame;
     private static JTextArea myOutputText;
+    private static JTextField myInputText;
+    private static String inputText;
     private static WeaponList weaponList = new WeaponList();
     public static void MainWindow()
     {
@@ -27,8 +26,24 @@ public class GUI{
         MyTable();
         ButtonPanel();
         myOutputText = new JTextArea("");
+        myInputText = new JTextField("");
+        myInputText.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == 10) {inputText = myInputText.getText();}
+            }
+        });
 
         contents.add(myOutputText, BorderLayout.SOUTH);
+        contents.add(myInputText, BorderLayout.SOUTH);
 
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         jFrame.setLocationByPlatform(true);
@@ -36,18 +51,19 @@ public class GUI{
         jFrame.setVisible(true);
     }
 
-    private static JTable jTable;
+    private static JTable jTableWeaponList;
     private static SimpleModel myTableModel;
     private static Box contents;
     private static void MyTable()
     {
         ReadArmory();
-        jTable = new JTable();
+        jTableWeaponList = new JTable();
 
         myTableModel = new SimpleModel(weaponList);
-        jTable.setModel(myTableModel);
+        jTableWeaponList.setModel(myTableModel);
+        jTableWeaponList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         contents = new Box(BoxLayout.Y_AXIS);
-        contents.add(new JScrollPane(jTable));
+        contents.add(new JScrollPane(jTableWeaponList));
         jFrame.getContentPane().add(contents, BorderLayout.CENTER);
     }
 
@@ -55,8 +71,25 @@ public class GUI{
     private static void ButtonPanel()
     {
         myButtonPanel = new JPanel();
+        myButtonPanel.setLayout(new BoxLayout(myButtonPanel, BoxLayout.Y_AXIS));
         JButton buttonAttack = new JButton("Атака");
+        JButton button = new JButton("work");
+        JButton button2 = new JButton("work2");
+        buttonAttack.addActionListener(e -> {
+            try {
+                //BaseWeapon weapon = weaponList.getWeapon(jTableWeaponList.getSelectedRow());
+                BaseWeapon weapon = weaponList.getWeapon(Integer.parseInt(myInputText.getText()));
+                System.out.println(jTableWeaponList.getSelectedRow());
+                weapon.Attack(10,5, myOutputText);
+            }
+            catch (Exception io)
+            {}
+        });
+
         myButtonPanel.add(buttonAttack);
+        myButtonPanel.add(button);
+        myButtonPanel.add(button2);
+
         jFrame.add(myButtonPanel, BorderLayout.WEST);
     }
 

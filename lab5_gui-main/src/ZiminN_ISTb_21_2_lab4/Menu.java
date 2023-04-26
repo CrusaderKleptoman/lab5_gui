@@ -239,7 +239,7 @@ public class Menu {
                         System.out.println("Введите уровень защиты на манекене и дистанцию до него");
                         System.out.println("Уровень защиты = "); int armoryLevel = readCommand();
                         System.out.println("Дистанция в футах = "); int distance = readCommand();
-                        weapon.Attack(armoryLevel, distance);
+                        //weapon.Attack(armoryLevel, distance);
                     }
                     catch (NullPointerException nullPointerException)
                     {

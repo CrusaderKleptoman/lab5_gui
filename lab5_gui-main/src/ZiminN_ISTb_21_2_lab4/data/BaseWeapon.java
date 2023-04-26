@@ -1,5 +1,6 @@
 package ZiminN_ISTb_21_2_lab4.data;
 
+import javax.swing.*;
 import java.util.Random;
 
 abstract public class BaseWeapon {
@@ -61,5 +62,5 @@ abstract public class BaseWeapon {
         return 0;
     }
 
-    abstract public int Attack(int enemyArmour, int distance);
+    abstract public int Attack(int enemyArmour, int distance, JTextArea outputText);
 }
