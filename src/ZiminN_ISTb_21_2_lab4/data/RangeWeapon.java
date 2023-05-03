@@ -1,7 +1,6 @@
 package ZiminN_ISTb_21_2_lab4.data;
 
-import javax.swing.*;
-import java.util.Scanner;
+import java.util.HashMap;
 
 public class RangeWeapon extends BaseWeapon {
     private int ammunition;
@@ -37,44 +36,49 @@ public class RangeWeapon extends BaseWeapon {
     public void setAmmunition(int ammunition) {this.ammunition = ammunition;}
 
     @Override
-    public int Attack(int enemyArmour, int distance, JTextArea outputText) {
-        Scanner scanner = new Scanner(System.in);
+    public HashMap<String, Integer> Attack(int enemyArmour, int distance) {
+        HashMap<String, Integer> message = new HashMap<>();
+        String text = new String();
         Boolean meleeShot = false;
         if (ammunition == 0)
         {
-            outputText.append("Отсутствуют боеприпасы для выстрела, завершение выстрела\n");
-            return 0;
+            text += "Отсутствуют боеприпасы для выстрела, завершение выстрела\n";
+            message.put(text, 0);
+            return message;
         }
         if (distance > this.getAttackRange())
         {
-            outputText.append("Враг слишком далеко для выстрела, невозможно совершение атаки\n");
-            return 0;
+            text += "Враг слишком далеко для выстрела, невозможно совершение атаки\n";
+            message.put(text, 0);
+            return message;
         }
         if (distance <= 5)
         {
-            outputText.append("Враг слишком близко для точного выстрела, выстрел с -2 к попаданию\n");
+            text += "Враг слишком близко для точного выстрела, выстрел с -2 к попаданию\n";
             meleeShot = true;
         }
         ammunition--;
-        int rollDiceDamage = this.getWeaponSharpening();
+        int rollDiceDamage = RollDice(this.getDamageDice()) + this.getWeaponSharpening();
         int rollDiceHit = RollDice("1D20") + this.getWeaponSharpening();
         if (meleeShot)
         {
             rollDiceHit -= 2;
         }
-        outputText.append("Бросок на попадание " + rollDiceHit + "\n");
+        text += "Бросок на попадание " + rollDiceHit + "\n";
         if (rollDiceHit < enemyArmour)
         {
-            outputText.append("Броня не пробита\n");
-            return 0;
+            text += "Броня не пробита\n";
+            message.put(text, 0);
+            return message;
         }
         else
         {
-            outputText.append("Броня пробита\n");
+            text += "Броня пробита\n";
             rollDiceDamage += RollDice(this.getDamageDice());
         }
 
-        outputText.append("Нанесено урона " + rollDiceDamage + "\n");
-        return rollDiceDamage;
+        text += "Нанесено урона " + rollDiceDamage + "\n";
+        message.put(text, rollDiceDamage);
+        return message;
     }
 }

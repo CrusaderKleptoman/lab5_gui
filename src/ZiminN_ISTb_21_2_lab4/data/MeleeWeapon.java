@@ -1,6 +1,5 @@
 package ZiminN_ISTb_21_2_lab4.data;
 
-import javax.swing.*;
 import java.util.HashMap;
 
 public class MeleeWeapon extends BaseWeapon {
@@ -24,29 +23,34 @@ public class MeleeWeapon extends BaseWeapon {
     }
 
     @Override
-    public int Attack(int enemyArmour, int distance, JTextArea outputText) {
+    public HashMap<String, Integer> Attack(int enemyArmour, int distance) {
 
+        HashMap<String, Integer> message = new HashMap<>();
+        String text = new String();
         if (distance > this.getAttackRange())
         {
-            outputText.append("Враг слишком далеко для удара, невозможно совершение атаки\n");
-            return 0;
+            text += "Враг слишком далеко для удара, невозможно совершение атаки\n";
+            message.put(text, 0);
+            return message;
         }
 
-        int rollDiceDamage = this.getWeaponSharpening();;
+        int rollDiceDamage = RollDice(this.getDamageDice()) + this.getWeaponSharpening();;
         int rollDiceHit = RollDice("1D20") + this.getWeaponSharpening();
-        outputText.append("Бросок на попадание " + rollDiceHit + "\n");
+        text += "Бросок на попадание " + rollDiceHit + "\n";
         if (rollDiceHit < enemyArmour)
         {
-            outputText.append("Броня не пробита\n");
-            return 0;
+            text += "Броня не пробита\n";
+            message.put(text, 0);
+            return message;
         }
         else
         {
-            outputText.append("Броня пробита\n");
+            text += "Броня пробита\n";
 
         }
 
-        outputText.append("Нанесено урона " + rollDiceDamage + "\n");
-        return rollDiceDamage;
+        text += "Нанесено урона " + rollDiceDamage + "\n";
+        message.put(text, rollDiceDamage);
+        return message;
     }
 }

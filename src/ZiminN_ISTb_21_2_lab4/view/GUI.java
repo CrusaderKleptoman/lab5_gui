@@ -1,5 +1,6 @@
 package ZiminN_ISTb_21_2_lab4.view;
 
+import ZiminN_ISTb_21_2_lab4.Main;
 import ZiminN_ISTb_21_2_lab4.data.*;
 
 
@@ -9,10 +10,7 @@ import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.EventObject;
 
 public class GUI{
@@ -45,12 +43,14 @@ public class GUI{
             }
         });
 
-        contents.add(myOutputText, BorderLayout.SOUTH);
+        myOutputText.setRows(10);
+        contents.add(new JScrollPane(myOutputText));
         contents.add(myInputText, BorderLayout.SOUTH);
 
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         jFrame.setLocationByPlatform(true);
-        jFrame.pack();
+        //jFrame.pack();
+        jFrame.setSize(700, 400);
         jFrame.setVisible(true);
     }
 
@@ -61,50 +61,18 @@ public class GUI{
     {
         ReadArmory();
         jTableWeaponList = new JTable();
-        jTableWeaponList.setDefaultEditor(String.class, new TableCellEditor() {
-            @Override
-            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-                return null;
-            }
-
-            @Override
-            public Object getCellEditorValue() {
-                return null;
-            }
-
-            @Override
-            public boolean isCellEditable(EventObject anEvent) {
-                return false;
-            }
-
-            @Override
-            public boolean shouldSelectCell(EventObject anEvent) {
-                return false;
-            }
-
-            @Override
-            public boolean stopCellEditing() {
-                return false;
-            }
-
-            @Override
-            public void cancelCellEditing() {
-
-            }
-
-            @Override
-            public void addCellEditorListener(CellEditorListener l) {
-
-            }
-
-            @Override
-            public void removeCellEditorListener(CellEditorListener l) {
-
-            }
-        });
         myTableModel = new SimpleModel(weaponList);
         jTableWeaponList.setModel(myTableModel);
+
+
+        //jTableWeaponList.setDefaultEditor(String.class, new DefaultCellEditor());
+        JComboBox<String> comboBox = new JComboBox<String>(new String[]{"Ближнего боя", "Дальнего боя"});
+        comboBox.setEditable(true);
+        DefaultCellEditor editor = new DefaultCellEditor(comboBox);
+
+        jTableWeaponList.getColumnModel().getColumn(0).setCellEditor(editor);
         jTableWeaponList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+
         contents = new Box(BoxLayout.Y_AXIS);
         contents.add(new JScrollPane(jTableWeaponList));
         jFrame.getContentPane().add(contents, BorderLayout.CENTER);
@@ -118,20 +86,66 @@ public class GUI{
         JButton buttonAttack = new JButton("Атака");
         JButton buttonAddWeapon = new JButton("Добавить оружие");
         JButton buttonDeleteWeapon = new JButton("Удалить оружие");
+        JButton buttonSaveArmory = new JButton("Сохранить арсенал");
         buttonAttack.addActionListener(e -> {
             try {
                 BaseWeapon weapon = weaponList.getWeapon(jTableWeaponList.getSelectedRow());
                 //BaseWeapon weapon = weaponList.getWeapon(Integer.parseInt(myInputText.getText()));
                 System.out.println(jTableWeaponList.getSelectedRow());
-                weapon.Attack(10,5, myOutputText);
+                myOutputText.append(weapon.Attack(10,5).toString());
+                myTableModel.fireTableDataChanged();
             }
             catch (Exception io)
             {}
         });
         buttonAddWeapon.addActionListener(e -> {
             try {
-                MeleeWeapon newWeapon = new MeleeWeapon();
-                weaponList.addWeapon(newWeapon);
+                JDialog jDialogAddWeapon = new JDialog(jFrame, "Создание оружия", true);
+
+
+                JPanel dialogPanel = new JPanel();
+
+                JComboBox<String> comboBox = new JComboBox<String>(new String[]{"Ближнего боя", "Дальнего боя"});
+                JTextArea weaponName = new JTextArea("Название оружия");
+                JTextArea diceAmount = new JTextArea("Количество костей");
+                JTextArea diceType = new JTextArea("Размер кости");
+                JTextArea weaponSharp = new JTextArea("Модификатор");
+                JTextArea weaponRange = new JTextArea("Дистанция");
+                JTextArea weaponAmmunition = new JTextArea("Боеприпасов(0 для ближнего)");
+                JButton createWeapon = new JButton("Создать оружие");
+                createWeapon.addActionListener(e1 -> {
+                    if (comboBox.getSelectedIndex()==0) {
+                        MeleeWeapon newWeapon = new MeleeWeapon(weaponName.getText(), diceAmount.getText()+"D"+diceType.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()));
+                        weaponList.addWeapon(newWeapon);
+                    }
+                    if (comboBox.getSelectedIndex()==1) {
+                        RangeWeapon newWeapon = new RangeWeapon(weaponName.getText(), diceAmount.getText()+"D"+diceType.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()), Integer.parseInt(weaponAmmunition.getText()));
+                        weaponList.addWeapon(newWeapon);
+                    }
+                });
+
+                weaponName.setColumns(10);
+                diceAmount.setColumns(5);
+                diceType.setColumns(5);
+                weaponSharp.setColumns(5);
+                weaponRange.setColumns(5);
+                weaponAmmunition.setColumns(5);
+
+
+                dialogPanel.add(comboBox);
+                dialogPanel.add(weaponName);
+                dialogPanel.add(diceAmount);
+                dialogPanel.add(diceType);
+                dialogPanel.add(weaponSharp);
+                dialogPanel.add(weaponRange);
+                dialogPanel.add(weaponAmmunition);
+                dialogPanel.add(createWeapon);
+
+                jDialogAddWeapon.setContentPane(dialogPanel);
+                jDialogAddWeapon.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                jDialogAddWeapon.setSize(800,110);
+                jDialogAddWeapon.setVisible(true);
+
                 myTableModel.fireTableDataChanged();
             }
             catch (Exception io)
@@ -139,9 +153,15 @@ public class GUI{
         });
         buttonDeleteWeapon.addActionListener(e -> {
             try {
-                MeleeWeapon newWeapon = new MeleeWeapon();
                 weaponList.removeWeaponWithID(jTableWeaponList.getSelectedRow());
                 myTableModel.fireTableDataChanged();
+            }
+            catch (Exception io)
+            {}
+        });
+        buttonSaveArmory.addActionListener(e -> {
+            try {
+                CloseArmory();
             }
             catch (Exception io)
             {}
@@ -149,6 +169,7 @@ public class GUI{
         myButtonPanel.add(buttonAttack);
         myButtonPanel.add(buttonAddWeapon);
         myButtonPanel.add(buttonDeleteWeapon);
+        myButtonPanel.add(buttonSaveArmory);
 
         jFrame.add(myButtonPanel, BorderLayout.WEST);
     }
@@ -183,8 +204,45 @@ public class GUI{
         catch (FileNotFoundException e) {
             System.out.println("Доступ к арсеналу отсутствует(не найден файл с данными)");;
         } catch (IOException e) {
+        }
+
+    }
+    private static void CloseArmory()
+    {
+        String armory = "armory.bin";
+        int weaponAmount;
+        String weaponType;
+        int ID;
+        try(DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(armory)))
+        {
+            BaseWeapon weaponOutput;
+            dataOutputStream.writeUTF(Integer.toString(weaponList.weaponAmount()));
+            for (int i = 0; i < weaponList.weaponAmount(); i++) {
+                weaponOutput = weaponList.getWeapon(i);
+                if(weaponOutput.getClass() == MeleeWeapon.class)
+                {
+                    dataOutputStream.writeUTF("MeleeWeapon");
+                    dataOutputStream.writeUTF(weaponOutput.getWeaponName());
+                    dataOutputStream.writeUTF(weaponOutput.getDamageDice());
+                    dataOutputStream.writeUTF(Integer.toString(weaponOutput.getWeaponSharpening()));
+                    dataOutputStream.writeUTF(Integer.toString(weaponOutput.getAttackRange()));
+                }
+                if(weaponOutput.getClass() == RangeWeapon.class)
+                {
+                    dataOutputStream.writeUTF("RangeWeapon");
+                    dataOutputStream.writeUTF(weaponOutput.getWeaponName());
+                    dataOutputStream.writeUTF(weaponOutput.getDamageDice());
+                    dataOutputStream.writeUTF(Integer.toString(weaponOutput.getWeaponSharpening()));
+                    dataOutputStream.writeUTF(Integer.toString(weaponOutput.getAttackRange()));
+                    dataOutputStream.writeUTF(Integer.toString(((RangeWeapon) weaponOutput).getAmmunition()));
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Доступ к арсеналу отсутствует(не найден файл с данными)");;
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("Оружие успешно сохранено в арсенале");
     }
 
 }
