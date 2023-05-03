@@ -16,7 +16,17 @@ public class WeaponList {
         {
             weaponList.add((RangeWeapon)weapon);
         }
-
+    }
+    public void changeWeapon(BaseWeapon weapon, int id)
+    {
+        if(weapon.getClass() == MeleeWeapon.class)
+        {
+            weaponList.set(id,((MeleeWeapon)weapon));
+        }
+        if(weapon.getClass() == RangeWeapon.class)
+        {
+            weaponList.set(id,((RangeWeapon)weapon));
+        }
     }
     public void removeWeapon(BaseWeapon weapon) {
         if(weapon.getClass() == MeleeWeapon.class)

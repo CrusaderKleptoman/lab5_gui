@@ -23,7 +23,6 @@ public class GUI{
     public static void MainWindow()
     {
         jFrame = new JFrame("Главное меню");
-        myOutputText = new JTextArea("asd");
         MyTable();
         ButtonPanel();
         myOutputText = new JTextArea("");
@@ -63,16 +62,6 @@ public class GUI{
         jTableWeaponList = new JTable();
         myTableModel = new SimpleModel(weaponList);
         jTableWeaponList.setModel(myTableModel);
-
-
-        //jTableWeaponList.setDefaultEditor(String.class, new DefaultCellEditor());
-        JComboBox<String> comboBox = new JComboBox<String>(new String[]{"Ближнего боя", "Дальнего боя"});
-        comboBox.setEditable(true);
-        DefaultCellEditor editor = new DefaultCellEditor(comboBox);
-
-        jTableWeaponList.getColumnModel().getColumn(0).setCellEditor(editor);
-        jTableWeaponList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-
         contents = new Box(BoxLayout.Y_AXIS);
         contents.add(new JScrollPane(jTableWeaponList));
         jFrame.getContentPane().add(contents, BorderLayout.CENTER);
@@ -84,9 +73,11 @@ public class GUI{
         myButtonPanel = new JPanel();
         myButtonPanel.setLayout(new BoxLayout(myButtonPanel, BoxLayout.Y_AXIS));
         JButton buttonAttack = new JButton("Атака");
+        JButton buttonChangeWeapon = new JButton("Изменить оружие");
         JButton buttonAddWeapon = new JButton("Добавить оружие");
         JButton buttonDeleteWeapon = new JButton("Удалить оружие");
         JButton buttonSaveArmory = new JButton("Сохранить арсенал");
+
         buttonAttack.addActionListener(e -> {
             try {
                 BaseWeapon weapon = weaponList.getWeapon(jTableWeaponList.getSelectedRow());
@@ -98,44 +89,92 @@ public class GUI{
             catch (Exception io)
             {}
         });
+        buttonChangeWeapon.addActionListener(e->{
+            try {
+                BaseWeapon customWeapon = weaponList.getWeapon(jTableWeaponList.getSelectedRow());
+                JDialog jDialogAddWeapon = new JDialog(jFrame, "Изменение оружия", true);
+                JPanel dialogPanel = new JPanel();
+
+                JComboBox<String> comboBox = new JComboBox<String>(new String[]{"Ближнего боя", "Дальнего боя"});
+                JTextArea weaponName = new JTextArea(customWeapon.getWeaponName());
+                JTextArea dice = new JTextArea(customWeapon.getDamageDice());
+                JTextArea weaponSharp = new JTextArea(String.valueOf(customWeapon.getWeaponSharpening()));
+                JTextArea weaponRange = new JTextArea(String.valueOf(customWeapon.getAttackRange()));
+                JTextArea weaponAmmunition = new JTextArea("");
+                if (customWeapon.getClass() == MeleeWeapon.class) { weaponAmmunition.setText("0");}
+                else if (customWeapon.getClass() == RangeWeapon.class){ weaponAmmunition.setText(String.valueOf(((RangeWeapon) customWeapon).getAmmunition()));}
+                JButton changeWeapon = new JButton("Изменить оружие");
+                changeWeapon.addActionListener(e1 -> {
+                    if (comboBox.getSelectedIndex()==0) {
+                        MeleeWeapon meleeWeapon = new MeleeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()));
+                        weaponList.changeWeapon(meleeWeapon, jTableWeaponList.getSelectedRow());
+                        jDialogAddWeapon.dispose();
+                    }
+                    if (comboBox.getSelectedIndex()==1) {
+                        RangeWeapon rangeWeapon = new RangeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()), Integer.parseInt(weaponAmmunition.getText()));
+                        weaponList.changeWeapon(rangeWeapon, jTableWeaponList.getSelectedRow());
+                        jDialogAddWeapon.dispose();
+                    }
+                });
+
+                weaponName.setColumns(10);
+                dice.setColumns(5);
+                weaponSharp.setColumns(5);
+                weaponRange.setColumns(5);
+                weaponAmmunition.setColumns(10);
+
+                dialogPanel.add(comboBox);
+                dialogPanel.add(weaponName);
+                dialogPanel.add(dice);
+                dialogPanel.add(weaponSharp);
+                dialogPanel.add(weaponRange);
+                dialogPanel.add(weaponAmmunition);
+                dialogPanel.add(changeWeapon);
+
+                jDialogAddWeapon.setContentPane(dialogPanel);
+                jDialogAddWeapon.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                jDialogAddWeapon.setSize(750,110);
+                jDialogAddWeapon.setVisible(true);
+
+                myTableModel.fireTableDataChanged();
+            }
+            catch (Exception io)
+            {}
+        });
         buttonAddWeapon.addActionListener(e -> {
             try {
                 JDialog jDialogAddWeapon = new JDialog(jFrame, "Создание оружия", true);
-
-
                 JPanel dialogPanel = new JPanel();
 
                 JComboBox<String> comboBox = new JComboBox<String>(new String[]{"Ближнего боя", "Дальнего боя"});
                 JTextArea weaponName = new JTextArea("Название оружия");
-                JTextArea diceAmount = new JTextArea("Количество костей");
-                JTextArea diceType = new JTextArea("Размер кости");
+                JTextArea dice = new JTextArea("Кости урона(*D*)");
                 JTextArea weaponSharp = new JTextArea("Модификатор");
                 JTextArea weaponRange = new JTextArea("Дистанция");
                 JTextArea weaponAmmunition = new JTextArea("Боеприпасов(0 для ближнего)");
                 JButton createWeapon = new JButton("Создать оружие");
                 createWeapon.addActionListener(e1 -> {
                     if (comboBox.getSelectedIndex()==0) {
-                        MeleeWeapon newWeapon = new MeleeWeapon(weaponName.getText(), diceAmount.getText()+"D"+diceType.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()));
+                        MeleeWeapon newWeapon = new MeleeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()));
                         weaponList.addWeapon(newWeapon);
+                        jDialogAddWeapon.dispose();
                     }
                     if (comboBox.getSelectedIndex()==1) {
-                        RangeWeapon newWeapon = new RangeWeapon(weaponName.getText(), diceAmount.getText()+"D"+diceType.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()), Integer.parseInt(weaponAmmunition.getText()));
+                        RangeWeapon newWeapon = new RangeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()), Integer.parseInt(weaponAmmunition.getText()));
                         weaponList.addWeapon(newWeapon);
+                        jDialogAddWeapon.dispose();
                     }
                 });
 
                 weaponName.setColumns(10);
-                diceAmount.setColumns(5);
-                diceType.setColumns(5);
+                dice.setColumns(5);
                 weaponSharp.setColumns(5);
                 weaponRange.setColumns(5);
-                weaponAmmunition.setColumns(5);
-
+                weaponAmmunition.setColumns(10);
 
                 dialogPanel.add(comboBox);
                 dialogPanel.add(weaponName);
-                dialogPanel.add(diceAmount);
-                dialogPanel.add(diceType);
+                dialogPanel.add(dice);
                 dialogPanel.add(weaponSharp);
                 dialogPanel.add(weaponRange);
                 dialogPanel.add(weaponAmmunition);
@@ -143,7 +182,7 @@ public class GUI{
 
                 jDialogAddWeapon.setContentPane(dialogPanel);
                 jDialogAddWeapon.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                jDialogAddWeapon.setSize(800,110);
+                jDialogAddWeapon.setSize(750,110);
                 jDialogAddWeapon.setVisible(true);
 
                 myTableModel.fireTableDataChanged();
@@ -167,6 +206,7 @@ public class GUI{
             {}
         });
         myButtonPanel.add(buttonAttack);
+        myButtonPanel.add(buttonChangeWeapon);
         myButtonPanel.add(buttonAddWeapon);
         myButtonPanel.add(buttonDeleteWeapon);
         myButtonPanel.add(buttonSaveArmory);
