@@ -29,7 +29,6 @@ abstract public class BaseWeapon {
         this.damageDice = weapon.damageDice;
         this.weaponSharpening = weapon.weaponSharpening;
         this.attackRange = weapon.attackRange;
-
     }
 
     public String getWeaponName() {return weaponName;}
@@ -52,6 +51,7 @@ abstract public class BaseWeapon {
         {
             diceAmount = diceAmount * 10 + Character.getNumericValue(dice.charAt(i));
             i++;
+            if(i == dice.length()) { return 0;}
         }
         i++;
         while(i < dice.length())

@@ -41,14 +41,14 @@ public class WeaponList {
         System.out.println("Оружие убрано из арсенала");
     }
 
-    public void removeWeaponWithID(int weaponID) {
+    public String removeWeaponWithID(int weaponID) {
         try {
             weaponList.remove(weaponList.get(weaponID));
-            System.out.println("Оружие убрано из арсенала");
+            return "Оружие убрано из арсенала";
         }
         catch (IndexOutOfBoundsException exception)
         {
-            System.out.println("Оружия под данным номером нет");
+            return "Выберите оружие";
         }
     }
     public void writeWeapon(int weaponID)

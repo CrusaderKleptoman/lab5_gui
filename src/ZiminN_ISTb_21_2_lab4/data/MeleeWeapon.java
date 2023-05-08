@@ -51,6 +51,7 @@ public class MeleeWeapon extends BaseWeapon {
 
         text += "Нанесено урона " + rollDiceDamage + "\n";
         message.put(text, rollDiceDamage);
+        if(RollDice(this.getDamageDice())==0){ message.put("Не указана кость урона", 0);}
         return message;
     }
 }

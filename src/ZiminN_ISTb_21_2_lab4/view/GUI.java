@@ -2,16 +2,16 @@ package ZiminN_ISTb_21_2_lab4.view;
 
 import ZiminN_ISTb_21_2_lab4.Main;
 import ZiminN_ISTb_21_2_lab4.data.*;
+import com.sun.xml.internal.ws.util.StringUtils;
 
 
 import javax.swing.*;
-import javax.swing.event.CellEditorListener;
-import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.*;
-import java.util.EventObject;
+import java.util.Collections;
+import java.util.NoSuchElementException;
 
 public class GUI{
 
@@ -80,10 +80,11 @@ public class GUI{
 
         buttonAttack.addActionListener(e -> {
             try {
+                if (jTableWeaponList.getSelectedRow() == -1) { myOutputText.append("Выберите оружие\n");}
                 BaseWeapon weapon = weaponList.getWeapon(jTableWeaponList.getSelectedRow());
-                //BaseWeapon weapon = weaponList.getWeapon(Integer.parseInt(myInputText.getText()));
                 System.out.println(jTableWeaponList.getSelectedRow());
                 myOutputText.append(weapon.Attack(10,5).toString());
+                myOutputText.append("\n");
                 myTableModel.fireTableDataChanged();
             }
             catch (Exception io)
@@ -92,7 +93,7 @@ public class GUI{
         buttonChangeWeapon.addActionListener(e->{
             try {
                 BaseWeapon customWeapon = weaponList.getWeapon(jTableWeaponList.getSelectedRow());
-                JDialog jDialogAddWeapon = new JDialog(jFrame, "Изменение оружия", true);
+                JDialog jDialogChangeWeapon = new JDialog(jFrame, "Изменение оружия", true);
                 JPanel dialogPanel = new JPanel();
 
                 JComboBox<String> comboBox = new JComboBox<String>(new String[]{"Ближнего боя", "Дальнего боя"});
@@ -105,16 +106,26 @@ public class GUI{
                 else if (customWeapon.getClass() == RangeWeapon.class){ weaponAmmunition.setText(String.valueOf(((RangeWeapon) customWeapon).getAmmunition()));}
                 JButton changeWeapon = new JButton("Изменить оружие");
                 changeWeapon.addActionListener(e1 -> {
-                    if (comboBox.getSelectedIndex()==0) {
-                        MeleeWeapon meleeWeapon = new MeleeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()));
-                        weaponList.changeWeapon(meleeWeapon, jTableWeaponList.getSelectedRow());
-                        jDialogAddWeapon.dispose();
+                    try {
+                        if (comboBox.getSelectedIndex()==0) {
+                            MeleeWeapon meleeWeapon = new MeleeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()));
+                            weaponList.changeWeapon(meleeWeapon, jTableWeaponList.getSelectedRow());
+                            jDialogChangeWeapon.dispose();
+                        }
+                        if (comboBox.getSelectedIndex()==1) {
+                            RangeWeapon rangeWeapon = new RangeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()), Integer.parseInt(weaponAmmunition.getText()));
+                            weaponList.changeWeapon(rangeWeapon, jTableWeaponList.getSelectedRow());
+                            jDialogChangeWeapon.dispose();
+                        }
                     }
-                    if (comboBox.getSelectedIndex()==1) {
-                        RangeWeapon rangeWeapon = new RangeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()), Integer.parseInt(weaponAmmunition.getText()));
-                        weaponList.changeWeapon(rangeWeapon, jTableWeaponList.getSelectedRow());
-                        jDialogAddWeapon.dispose();
+                    catch (NumberFormatException io)
+                    {
+                        if (weaponSharp.getText().isEmpty() || !isNumeric(weaponSharp)) {weaponSharp.setText("Напишите модификатор");}
+                        if (weaponRange.getText().isEmpty() || !isNumeric(weaponRange)) {weaponRange.setText("Напишите дистанцию");}
+                        if ((weaponAmmunition.getText().isEmpty() || !isNumeric(weaponAmmunition)) && comboBox.getSelectedIndex()==1) {weaponAmmunition.setText("Напишите аммуницию");}
                     }
+                    catch (Exception io)
+                    {}
                 });
 
                 weaponName.setColumns(10);
@@ -131,15 +142,21 @@ public class GUI{
                 dialogPanel.add(weaponAmmunition);
                 dialogPanel.add(changeWeapon);
 
-                jDialogAddWeapon.setContentPane(dialogPanel);
-                jDialogAddWeapon.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                jDialogAddWeapon.setSize(750,110);
-                jDialogAddWeapon.setVisible(true);
+                jDialogChangeWeapon.setContentPane(dialogPanel);
+                jDialogChangeWeapon.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                jDialogChangeWeapon.setSize(750,110);
+                jDialogChangeWeapon.setVisible(true);
 
                 myTableModel.fireTableDataChanged();
             }
+            catch (NullPointerException io)
+            {
+                myOutputText.append("Выберите оружие");
+            }
             catch (Exception io)
-            {}
+            {
+
+            }
         });
         buttonAddWeapon.addActionListener(e -> {
             try {
@@ -154,16 +171,26 @@ public class GUI{
                 JTextArea weaponAmmunition = new JTextArea("Боеприпасов(0 для ближнего)");
                 JButton createWeapon = new JButton("Создать оружие");
                 createWeapon.addActionListener(e1 -> {
-                    if (comboBox.getSelectedIndex()==0) {
-                        MeleeWeapon newWeapon = new MeleeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()));
-                        weaponList.addWeapon(newWeapon);
-                        jDialogAddWeapon.dispose();
+                    try {
+                        if (comboBox.getSelectedIndex()==0) {
+                            MeleeWeapon meleeWeapon = new MeleeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()));
+                            weaponList.addWeapon(meleeWeapon);
+                            jDialogAddWeapon.dispose();
+                        }
+                        if (comboBox.getSelectedIndex()==1) {
+                            RangeWeapon rangeWeapon = new RangeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()), Integer.parseInt(weaponAmmunition.getText()));
+                            weaponList.addWeapon(rangeWeapon);
+                            jDialogAddWeapon.dispose();
+                        }
                     }
-                    if (comboBox.getSelectedIndex()==1) {
-                        RangeWeapon newWeapon = new RangeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()), Integer.parseInt(weaponAmmunition.getText()));
-                        weaponList.addWeapon(newWeapon);
-                        jDialogAddWeapon.dispose();
+                    catch (NumberFormatException io)
+                    {
+                        if (weaponSharp.getText().isEmpty() || !isNumeric(weaponSharp)) {weaponSharp.setText("Напишите модификатор");}
+                        if (weaponRange.getText().isEmpty() || !isNumeric(weaponRange)) {weaponRange.setText("Напишите дистанцию");}
+                        if ((weaponAmmunition.getText().isEmpty() || !isNumeric(weaponAmmunition)) && comboBox.getSelectedIndex()==1) {weaponAmmunition.setText("Напишите аммуницию");}
                     }
+                    catch (Exception io)
+                    {}
                 });
 
                 weaponName.setColumns(10);
@@ -192,7 +219,8 @@ public class GUI{
         });
         buttonDeleteWeapon.addActionListener(e -> {
             try {
-                weaponList.removeWeaponWithID(jTableWeaponList.getSelectedRow());
+                myOutputText.append(weaponList.removeWeaponWithID(jTableWeaponList.getSelectedRow()));
+                myOutputText.append("\n");
                 myTableModel.fireTableDataChanged();
             }
             catch (Exception io)
@@ -212,6 +240,19 @@ public class GUI{
         myButtonPanel.add(buttonSaveArmory);
 
         jFrame.add(myButtonPanel, BorderLayout.WEST);
+    }
+
+    private static boolean isNumeric(JTextArea textArea)
+    {
+        String text = textArea.getText();
+        char symbol;
+        for (int i = 0; i < text.length(); i++) {
+            symbol = text.charAt(i);
+            for (int j = 48; j < 58; j++) {
+                if(symbol != (char)i) {return false;}
+            }
+        }
+        return true;
     }
 
     private static void ReadArmory()
