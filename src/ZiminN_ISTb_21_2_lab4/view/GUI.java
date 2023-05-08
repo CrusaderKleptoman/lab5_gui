@@ -1,17 +1,12 @@
 package ZiminN_ISTb_21_2_lab4.view;
 
-import ZiminN_ISTb_21_2_lab4.Main;
 import ZiminN_ISTb_21_2_lab4.data.*;
-import com.sun.xml.internal.ws.util.StringUtils;
-
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.*;
-import java.util.Collections;
-import java.util.NoSuchElementException;
 
 public class GUI{
 
@@ -66,7 +61,6 @@ public class GUI{
         contents.add(new JScrollPane(jTableWeaponList));
         jFrame.getContentPane().add(contents, BorderLayout.CENTER);
     }
-
     private static JPanel myButtonPanel;
     private static void ButtonPanel()
     {
@@ -241,7 +235,6 @@ public class GUI{
 
         jFrame.add(myButtonPanel, BorderLayout.WEST);
     }
-
     private static boolean isNumeric(JTextArea textArea)
     {
         String text = textArea.getText();
@@ -254,7 +247,6 @@ public class GUI{
         }
         return true;
     }
-
     private static void ReadArmory()
     {
         String armory = "armory.bin";
