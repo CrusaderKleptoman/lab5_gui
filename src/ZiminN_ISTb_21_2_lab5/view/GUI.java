@@ -240,6 +240,7 @@ public class GUI{
         });
         buttonSaveArmory.addActionListener(e -> {
             CloseArmory();
+            myOutputText.append("Арсенал сохранён\n");
         });
 
         myButtonPanel.add(buttonAttack);
