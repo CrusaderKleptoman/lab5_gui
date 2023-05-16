@@ -46,11 +46,11 @@ abstract public class BaseWeapon {
         int diceAmount = 0;
         int diceType = 0;
         int result = 0;
-        while(dice.charAt(i)!='D')
+        while(!dice.isEmpty() && dice.charAt(i)!='D')
         {
             diceAmount = diceAmount * 10 + Character.getNumericValue(dice.charAt(i));
             i++;
-            if(i == dice.length()) { return Integer.parseInt(dice);}
+            if(i >= dice.length()) { return diceAmount;}
         }
         i++;
         while(i < dice.length())
