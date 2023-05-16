@@ -116,7 +116,7 @@ public class GUI{
                     if ((weaponAmmunition.getText().isEmpty() || !isNumeric(weaponAmmunition.getText())) && comboBox.getSelectedIndex()==1) {weaponAmmunition.setText("Введите данные"); weaponAmmunition.setForeground(Color.RED); wrongInput = true;}
 
                     if (wrongInput) return;
-                    
+
                     if (comboBox.getSelectedIndex()==0) {
                         MeleeWeapon meleeWeapon = new MeleeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()));
                         weaponList.changeWeapon(meleeWeapon, id);
@@ -153,7 +153,7 @@ public class GUI{
             }
             catch (NullPointerException io)
             {
-                myOutputText.append("Выберите оружие");
+                myOutputText.append("Выберите оружие\n");
             }
             catch (Exception io)
             {
