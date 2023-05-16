@@ -50,7 +50,6 @@ public class GUI{
     private static void ButtonPanel()
     {
         myButtonPanel = new JPanel();
-        myButtonPanel.setLayout(new BoxLayout(myButtonPanel, BoxLayout.Y_AXIS));
         myButtonPanel.setLayout(new GridLayout(0,1));
 
         JButton buttonAttack = new JButton("Атака");
@@ -91,11 +90,11 @@ public class GUI{
                 dialogPanel.setLayout(new GridLayout(0, 6));
 
                 JComboBox<String> comboBox = new JComboBox<String>(new String[]{"Ближнего боя", "Дальнего боя"});
-                JTextArea weaponName = new JTextArea(customWeapon.getWeaponName());
-                JTextArea dice = new JTextArea(customWeapon.getDamageDice());
-                JTextArea weaponSharp = new JTextArea(String.valueOf(customWeapon.getWeaponSharpening()));
-                JTextArea weaponRange = new JTextArea(String.valueOf(customWeapon.getAttackRange()));
-                JTextArea weaponAmmunition = new JTextArea("");
+                JTextField weaponName = new JTextField(customWeapon.getWeaponName());
+                JTextField dice = new JTextField(customWeapon.getDamageDice());
+                JTextField weaponSharp = new JTextField(String.valueOf(customWeapon.getWeaponSharpening()));
+                JTextField weaponRange = new JTextField(String.valueOf(customWeapon.getAttackRange()));
+                JTextField weaponAmmunition = new JTextField("");
 
                 if (customWeapon.getClass() == MeleeWeapon.class) { weaponAmmunition.setText("0");}
                 else if (customWeapon.getClass() == RangeWeapon.class){ weaponAmmunition.setText(String.valueOf(((RangeWeapon) customWeapon).getAmmunition()));}
@@ -167,11 +166,11 @@ public class GUI{
                 dialogPanel.setLayout(new GridLayout(0, 6));
 
                 JComboBox<String> comboBox = new JComboBox<String>(new String[]{"Ближнего боя", "Дальнего боя"});
-                JTextArea weaponName = new JTextArea("Название оружия");
-                JTextArea dice = new JTextArea("Кости урона(*D*)");
-                JTextArea weaponSharp = new JTextArea("Модификатор");
-                JTextArea weaponRange = new JTextArea("Дистанция");
-                JTextArea weaponAmmunition = new JTextArea("Боеприпасы");
+                JTextField weaponName = new JTextField("Название оружия");
+                JTextField dice = new JTextField("Кости урона(*D*)");
+                JTextField weaponSharp = new JTextField("Модификатор");
+                JTextField weaponRange = new JTextField("Дистанция");
+                JTextField weaponAmmunition = new JTextField("Боеприпасы");
                 JButton createWeapon = new JButton("Создать оружие");
                 createWeapon.addActionListener(e1 -> {
                     boolean wrongInput = false;

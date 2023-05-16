@@ -28,18 +28,6 @@ public class WeaponList {
             weaponList.set(id,((RangeWeapon)weapon));
         }
     }
-    public void removeWeapon(BaseWeapon weapon) {
-        if(weapon.getClass() == MeleeWeapon.class)
-        {
-            weaponList.remove((MeleeWeapon)weapon);
-        }
-        if(weapon.getClass() == RangeWeapon.class)
-        {
-            weaponList.remove((RangeWeapon)weapon);
-        }
-
-        System.out.println("Оружие убрано из арсенала");
-    }
 
     public String removeWeaponWithID(int weaponID) {
         try {
