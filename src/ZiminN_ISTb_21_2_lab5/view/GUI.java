@@ -15,7 +15,6 @@ public class GUI{
     private static JFrame jFrame;
     private static JTextArea myOutputText;
     private static JTextField myInputText;
-    private static WeaponList weaponList = new WeaponList();
     public static void MainWindow()
     {
         jFrame = new JFrame("Главное меню");
@@ -38,9 +37,8 @@ public class GUI{
     private static Box contents;
     private static void MyTable()
     {
-        ReadArmory();
         jTableWeaponList = new JTable();
-        myTableModel = new SimpleModel(weaponList);
+        myTableModel = new SimpleModel();
         jTableWeaponList.setModel(myTableModel);
         contents = new Box(BoxLayout.Y_AXIS);
         contents.add(new JScrollPane(jTableWeaponList));
@@ -64,8 +62,9 @@ public class GUI{
         buttonAttack.addActionListener(e -> {
             try {
                 if (jTableWeaponList.getSelectedRow() == -1) { myOutputText.append("Выберите оружие\n");}
-                BaseWeapon weapon = weaponList.getWeapon(jTableWeaponList.getSelectedRow());
-                System.out.println(jTableWeaponList.getSelectedRow());
+                int id = jTableWeaponList.getSelectedRow();
+                BaseWeapon weapon = myTableModel.getWeapon(id);
+                System.out.println(id);
                 myOutputText.append(weapon.Attack(armor,distance).toString());
                 myOutputText.append("\n");
                 myTableModel.fireTableDataChanged();
@@ -84,7 +83,7 @@ public class GUI{
         buttonChangeWeapon.addActionListener(e->{
             try {
                 int id = jTableWeaponList.getSelectedRow();
-                BaseWeapon customWeapon = weaponList.getWeapon(id);
+                BaseWeapon customWeapon = myTableModel.getWeapon(id);
                 JDialog jDialogChangeWeapon = new JDialog(jFrame, "Изменение оружия", true);
                 JPanel dialogPanel = new JPanel();
                 dialogPanel.setLayout(new GridLayout(0, 6));
@@ -118,12 +117,12 @@ public class GUI{
 
                     if (comboBox.getSelectedIndex()==0) {
                         MeleeWeapon meleeWeapon = new MeleeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()));
-                        weaponList.changeWeapon(meleeWeapon, id);
+                        myTableModel.setWeapon(meleeWeapon, id);
                         jDialogChangeWeapon.dispose();
                     }
                     if (comboBox.getSelectedIndex()==1) {
                         RangeWeapon rangeWeapon = new RangeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()), Integer.parseInt(weaponAmmunition.getText()));
-                        weaponList.changeWeapon(rangeWeapon, id);
+                        myTableModel.setWeapon(rangeWeapon, id);
                         jDialogChangeWeapon.dispose();
                     }
                 });
@@ -190,12 +189,12 @@ public class GUI{
 
                     if (comboBox.getSelectedIndex()==0) {
                         MeleeWeapon meleeWeapon = new MeleeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()));
-                        weaponList.addWeapon(meleeWeapon);
+                        myTableModel.addWeapon(meleeWeapon);
                         jDialogAddWeapon.dispose();
                     }
                     if (comboBox.getSelectedIndex()==1) {
                         RangeWeapon rangeWeapon = new RangeWeapon(weaponName.getText(), dice.getText(), Integer.parseInt(weaponSharp.getText()), Integer.parseInt(weaponRange.getText()), Integer.parseInt(weaponAmmunition.getText()));
-                        weaponList.addWeapon(rangeWeapon);
+                        myTableModel.addWeapon(rangeWeapon);
                         jDialogAddWeapon.dispose();
                     }
                 });
@@ -227,7 +226,7 @@ public class GUI{
         });
         buttonDeleteWeapon.addActionListener(e -> {
             try {
-                myOutputText.append(weaponList.removeWeaponWithID(jTableWeaponList.getSelectedRow()));
+                myOutputText.append(myTableModel.removeWeapon(jTableWeaponList.getSelectedRow()));
                 myOutputText.append("\n");
                 myTableModel.fireTableDataChanged();
             }
@@ -238,7 +237,7 @@ public class GUI{
             myOutputText.setText("");
         });
         buttonSaveArmory.addActionListener(e -> {
-            CloseArmory();
+            SimpleModel.CloseArmory();
             myOutputText.append("Арсенал сохранён\n");
         });
 
@@ -265,76 +264,6 @@ public class GUI{
             if (!numeric) {return false;}
         }
         return numeric;
-    }
-    private static void ReadArmory()
-    {
-        String armory = "armory.bin";
-        int weaponAmount;
-        String weaponType;
-        int ID;
-        weaponList.clearWeaponList();
-        try (DataInputStream dataInputStream = new DataInputStream(new FileInputStream(armory))) {
-            weaponAmount = Integer.parseInt(dataInputStream.readUTF());
-            for (int i = 0; i < weaponAmount; i++) {
-                weaponType = dataInputStream.readUTF();
-                if (weaponType.equals("MeleeWeapon"))
-                {
-                    MeleeWeapon meleeWeapon = new MeleeWeapon(dataInputStream.readUTF(), dataInputStream.readUTF(), Integer.parseInt(dataInputStream.readUTF()), Integer.parseInt(dataInputStream.readUTF()));
-                    weaponList.addWeapon(meleeWeapon);
-                }
-                if (weaponType.equals("RangeWeapon"))
-                {
-                    RangeWeapon rangeWeapon = new RangeWeapon(dataInputStream.readUTF(), dataInputStream.readUTF(), Integer.parseInt(dataInputStream.readUTF()), Integer.parseInt(dataInputStream.readUTF()), Integer.parseInt(dataInputStream.readUTF()));
-                    weaponList.addWeapon(rangeWeapon);
-                }
-            }
-        }
-        catch (NumberFormatException exception)
-        {
-            System.out.println("Неверный формат данных в файле или внезапный конец файла, возвращение в меню \n");
-        }
-        catch (FileNotFoundException e) {
-            System.out.println("Доступ к арсеналу отсутствует(не найден файл с данными)");;
-        } catch (IOException e) {
-        }
-
-    }
-    private static void CloseArmory()
-    {
-        String armory = "armory.bin";
-        int weaponAmount;
-        String weaponType;
-        int ID;
-        try(DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(armory)))
-        {
-            BaseWeapon weaponOutput;
-            dataOutputStream.writeUTF(Integer.toString(weaponList.weaponAmount()));
-            for (int i = 0; i < weaponList.weaponAmount(); i++) {
-                weaponOutput = weaponList.getWeapon(i);
-                if(weaponOutput.getClass() == MeleeWeapon.class)
-                {
-                    dataOutputStream.writeUTF("MeleeWeapon");
-                    dataOutputStream.writeUTF(weaponOutput.getWeaponName());
-                    dataOutputStream.writeUTF(weaponOutput.getDamageDice());
-                    dataOutputStream.writeUTF(Integer.toString(weaponOutput.getWeaponSharpening()));
-                    dataOutputStream.writeUTF(Integer.toString(weaponOutput.getAttackRange()));
-                }
-                if(weaponOutput.getClass() == RangeWeapon.class)
-                {
-                    dataOutputStream.writeUTF("RangeWeapon");
-                    dataOutputStream.writeUTF(weaponOutput.getWeaponName());
-                    dataOutputStream.writeUTF(weaponOutput.getDamageDice());
-                    dataOutputStream.writeUTF(Integer.toString(weaponOutput.getWeaponSharpening()));
-                    dataOutputStream.writeUTF(Integer.toString(weaponOutput.getAttackRange()));
-                    dataOutputStream.writeUTF(Integer.toString(((RangeWeapon) weaponOutput).getAmmunition()));
-                }
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("Доступ к арсеналу отсутствует(не найден файл с данными)");;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("Оружие успешно сохранено в арсенале");
     }
 
 }
