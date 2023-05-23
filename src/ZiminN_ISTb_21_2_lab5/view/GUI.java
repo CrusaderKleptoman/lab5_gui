@@ -4,9 +4,6 @@ import ZiminN_ISTb_21_2_lab5.data.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.*;
 
 public class GUI{
 
@@ -24,8 +21,8 @@ public class GUI{
         myInputText = new JTextField("");
 
         myOutputText.setRows(10);
-        contents.add(new JScrollPane(myOutputText));
-        contents.add(myInputText, BorderLayout.SOUTH);
+        tableContents.add(new JScrollPane(myOutputText));
+        tableContents.add(myInputText, BorderLayout.SOUTH);
 
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         jFrame.setLocationByPlatform(true);
@@ -34,15 +31,15 @@ public class GUI{
     }
     private static JTable jTableWeaponList;
     private static SimpleModel myTableModel;
-    private static Box contents;
+    private static Box tableContents;
     private static void MyTable()
     {
         jTableWeaponList = new JTable();
         myTableModel = new SimpleModel();
         jTableWeaponList.setModel(myTableModel);
-        contents = new Box(BoxLayout.Y_AXIS);
-        contents.add(new JScrollPane(jTableWeaponList));
-        jFrame.getContentPane().add(contents, BorderLayout.CENTER);
+        tableContents = new Box(BoxLayout.Y_AXIS);
+        tableContents.add(new JScrollPane(jTableWeaponList));
+        jFrame.getContentPane().add(tableContents, BorderLayout.CENTER);
     }
     private static JPanel myButtonPanel;
     private static void ButtonPanel()
